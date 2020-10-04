@@ -1,18 +1,30 @@
+import 'package:access/blocs/add_personal_details_bloc.dart';
+import 'package:access/enums/page_input_state.dart';
+import 'package:access/models/personal_details_model.dart';
 import 'package:access/pages/self_declaration_page.dart';
 import 'package:access/widgets/iconized_text_input_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:access/extentions/string_validation_extensions.dart';
+import 'package:uuid/uuid.dart';
 
-class RegistrationPage extends StatefulWidget {
-  static const route = '/';
+class AddPersonalDetailsPage extends StatefulWidget {
+  static const route = '/add-personal-details';
+
+  final PageInputState inputState;
+
+  const AddPersonalDetailsPage(
+      {Key key, this.inputState = PageInputState.Insert})
+      : super(key: key);
 
   @override
-  _RegistrationPageState createState() => _RegistrationPageState();
+  _AddPersonalDetailsPageState createState() => _AddPersonalDetailsPageState();
 }
 
-class _RegistrationPageState extends State<RegistrationPage> {
+class _AddPersonalDetailsPageState extends State<AddPersonalDetailsPage> {
   bool _isFormFilled = false;
+
+  AddPersonalDetailsBloc _addPersonalDetailsBloc = AddPersonalDetailsBloc();
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
@@ -24,6 +36,26 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final FocusNode _numberNode = FocusNode();
 
   int _cellNumberLength = 10;
+
+  @override
+  void initState() {
+    switch (this.widget.inputState) {
+      case PageInputState.Edit:
+        initTextFields();
+        break;
+      default:
+    }
+    super.initState();
+  }
+
+  void initTextFields() async {
+    PersonalDetailsModel model =
+        await this._addPersonalDetailsBloc.getPersonalDetails();
+    _nameController.text = model.name;
+    _surnameController.text = model.surname;
+    _numberController.text = model.cellNumber;
+    this._isFormFilled = true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +77,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       validator: _validateName,
                       focusNode: _nameNode,
                       nextFocusNode: _surnameNode,
-                      onChanged:(_) => isFormEmpty(),
+                      onChanged: (_) => isFormEmpty(),
                     ),
                     IconizedTextInputWidget(
                       controller: _surnameController,
@@ -55,7 +87,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       validator: _validateName,
                       focusNode: _surnameNode,
                       nextFocusNode: _numberNode,
-                      onChanged:(_) => isFormEmpty(),
+                      onChanged: (_) => isFormEmpty(),
                     ),
                     IconizedTextInputWidget(
                       controller: _numberController,
@@ -65,7 +97,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       textInputType: TextInputType.number,
                       validator: _validateCellNumber,
                       focusNode: _numberNode,
-                      onChanged:(_) => isFormEmpty(),
+                      onChanged: (_) => isFormEmpty(),
                     ),
                   ],
                 ),
@@ -113,14 +145,31 @@ class _RegistrationPageState extends State<RegistrationPage> {
           _surnameController.text.isEmpty ||
           _numberController.text.isEmpty) {
         _isFormFilled = false;
-      }else{
+      } else {
         _isFormFilled = true;
       }
     });
   }
 
-  void _onSave() {
+  void _onSave() async {
     if (_formKey.currentState.validate()) {
+      PersonalDetailsModel model = new PersonalDetailsModel(
+        id: Uuid().v1(),
+        name: _nameController.text,
+        surname: _surnameController.text,
+        cellNumber: _numberController.text,
+      );
+
+      switch (this.widget.inputState) {
+        case PageInputState.Insert:
+          await this._addPersonalDetailsBloc.registerUser(model);
+
+          break;
+        case PageInputState.Edit:
+          await this._addPersonalDetailsBloc.updatePersonalDetails(model);
+          break;
+        default:
+      }
       Navigator.pushReplacementNamed(context, SelfDeclarationPage.route);
     }
   }

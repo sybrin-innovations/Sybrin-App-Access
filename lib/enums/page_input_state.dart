@@ -1,0 +1,4 @@
+enum PageInputState{
+  Insert,
+  Edit
+}
