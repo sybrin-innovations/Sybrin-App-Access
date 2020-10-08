@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:access/models/data_result.dart';
 import 'package:access/models/form_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,8 +11,10 @@ class SubmitHandler{
   Future<DataResult<String>> submitData(FormModel model) async {
     DataResult<String> dataResult;
     try {
+      String value = json.encode(model.toJson());
+
       DataResult<String> httpResult =
-          await HttpCallHandler.makeJsonCall(model.toJson(), model.url);
+          await HttpCallHandler.makeJsonCall(value, model.url);
       if (httpResult.success) {
         dataResult = DataResult<String>(success: true, value: httpResult.value);
       } else {
