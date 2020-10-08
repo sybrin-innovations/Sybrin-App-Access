@@ -11,7 +11,7 @@ class SubmitHandler{
   Future<DataResult<String>> submitData(FormModel model) async {
     DataResult<String> dataResult;
     try {
-      String value = json.encode(model.toJson());
+      String value = json.encode(json.encode(model.toJson()));
 
       DataResult<String> httpResult =
           await HttpCallHandler.makeJsonCall(value, model.url);
@@ -23,7 +23,7 @@ class SubmitHandler{
     } catch (e) {
       debugPrint('PROVIDER ERROR : $e');
       dataResult =
-          DataResult<String>(success: false, error: "Error getting Hanis data");
+          DataResult<String>(success: false, error: "Error getting response");
     }
 
     return dataResult;

@@ -7,7 +7,7 @@ part 'form_model.g.dart';
 class FormModel {
   final String url;
   @JsonKey()
-  final List<QuestionModel> answers;
+  final String answers;
   @JsonKey()
   final DateTime startDate;
   @JsonKey()
