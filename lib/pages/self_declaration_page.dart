@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:access/blocs/self_declaration_bloc.dart';
 import 'package:access/handlers/submit_handler.dart';
 import 'package:access/models/form_model.dart';
@@ -100,7 +102,7 @@ class _SelfDeclarationPageState extends State<SelfDeclarationPage> {
 
     FormModel model = new FormModel(
         "https://forms.office.com/formapi/api/1d61f1f2-374b-4a48-8a03-46fc9a907911/users/227560ca-7933-4c1c-bc65-c47fed36f1b1/forms('8vFhHUs3SEqKA0b8mpB5EcpgdSIzeRxMvGXEf-028bFURDAyN0JVMFFHVUFSWVk0WERIWlRXRVRRQy4u')/responses",
-        questions,
+        json.encode(questions),
         new DateTime.now().add(new Duration(minutes: -1)),
         new DateTime.now());
 

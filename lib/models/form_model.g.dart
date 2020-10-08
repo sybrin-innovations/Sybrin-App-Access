@@ -20,8 +20,7 @@ FormModel _$FormModelFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$FormModelToJson(FormModel instance) => <String, dynamic>{
-      'url': instance.url,
       'answers': instance.answers,
-      'startDate': instance.startDate?.toIso8601String(),
-      'submitDate': instance.submitDate?.toIso8601String(),
+      'startDate': instance.startDate?.toUtc().toIso8601String(),
+      'submitDate': instance.submitDate?.toUtc().toIso8601String(),
     };

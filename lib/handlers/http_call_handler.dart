@@ -11,7 +11,7 @@ class HttpCallHandler {
     DataResult<String> result;
     try {
       Response response = await post(url, headers: {"Content-Type": "application/json"}, body: json);
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         result = DataResult<String>(success: true, value: response.body);
       } else {
         throw Exception(response.body);
