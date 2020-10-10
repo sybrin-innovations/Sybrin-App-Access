@@ -9,6 +9,10 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="access"
         android:icon="@mipmap/ic_launcher">
+        <activity android:name=".CameraActivity"
+            android:theme="@style/TransparentUI"
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

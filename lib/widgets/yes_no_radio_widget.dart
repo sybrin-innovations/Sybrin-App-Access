@@ -15,7 +15,7 @@ class YesNoRadioWidget extends StatefulWidget {
 }
 
 class _YesNoRadioWidgetState extends State<YesNoRadioWidget> {
-  int _groupValue = 0;
+  int _groupValue = -1;
 
   String _firstLabel = "Yes";
   String _secondLabel = "No";

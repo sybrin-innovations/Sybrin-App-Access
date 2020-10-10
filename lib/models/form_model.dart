@@ -7,16 +7,16 @@ part 'form_model.g.dart';
 class FormModel {
   final String url;
   @JsonKey()
-  final String answers;
+  String answers;
   @JsonKey()
   final DateTime startDate;
   @JsonKey()
-  final DateTime submitDate;
+  DateTime submitDate;
 
   FormModel(this.url, this.answers, this.startDate, this.submitDate);
 
   factory FormModel.fromJson(Map<String, dynamic> json) =>
       _$FormModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$FormModelToJson(this); 
+  Map<String, dynamic> toJson() => _$FormModelToJson(this);
 }

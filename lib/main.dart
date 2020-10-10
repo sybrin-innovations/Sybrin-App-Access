@@ -1,4 +1,5 @@
 
+import 'package:access/pages/landing_page.dart';
 import 'package:access/pages/self_declaration_page.dart';
 import 'package:access/pages/symptoms_page.dart';
 import 'package:access/utils/route_generator.dart';
@@ -18,8 +19,9 @@ class MyApp extends StatelessWidget {
       title: 'Sybrin Access',
       onGenerateRoute: RouteGenerator.generateRoute,
       theme: ThemeData(primaryColor: Colors.blue, accentColor: Colors.lightBlue, backgroundColor: Colors.deepPurple),
-      initialRoute: SelfDeclarationPage.route,
+      initialRoute: LandingPage.route,
       routes: {
+        LandingPage.route: (BuildContext context) => LandingPage(),
         SelfDeclarationPage.route: (BuildContext context) => SelfDeclarationPage(),
         SymptomsPage.route: (BuildContext context) => SymptomsPage()
       },

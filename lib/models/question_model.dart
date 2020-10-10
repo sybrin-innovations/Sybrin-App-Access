@@ -1,8 +1,6 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
-import 'package:json_annotation/json_annotation.dart';
-
 part 'question_model.g.dart';
 
 @JsonSerializable()
@@ -11,9 +9,13 @@ class QuestionModel {
   @JsonKey()
   final String questionId;
   @JsonKey()
-  final String answer1;
+  String answer1;
 
   QuestionModel(this.questionLabel, this.questionId, this.answer1);
+
+  void answer(String answer){
+    this.answer1 = answer;
+  }
 
   factory QuestionModel.fromJson(Map<String, dynamic> json) =>
       _$QuestionModelFromJson(json);
