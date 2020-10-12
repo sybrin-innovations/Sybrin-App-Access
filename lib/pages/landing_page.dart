@@ -40,7 +40,7 @@ class _LandingPageState extends State<LandingPage> {
     ScanResultModel model = await _scanQRCode();
 
     if (model.success) {
-      Navigator.pushReplacementNamed(context, SelfDeclarationPage.route);
+      Navigator.pushNamed(context, SelfDeclarationPage.route);
     }
   }
 }

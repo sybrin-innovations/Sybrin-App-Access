@@ -1,4 +1,4 @@
-import 'package:access/models/question_model.dart';
+import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'form_model.g.dart';

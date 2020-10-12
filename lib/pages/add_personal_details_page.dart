@@ -155,8 +155,8 @@ class _AddPersonalDetailsPageState extends State<AddPersonalDetailsPage> {
     if (_formKey.currentState.validate()) {
       PersonalDetailsModel model = new PersonalDetailsModel(
         id: Uuid().v1(),
-        name: _nameController.text,
-        surname: _surnameController.text,
+        name: _nameController.text.capitalize(),
+        surname: _surnameController.text.capitalize(),
         cellNumber: _numberController.text,
       );
 

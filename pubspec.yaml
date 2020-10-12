@@ -22,7 +22,8 @@ environment:
 
 dependencies:
   auto_size_text: 2.1.0
-  http: ^0.12.2
+  http: 0.12.2
+  intl: 0.15.7
   flutter:
     sdk: flutter
   

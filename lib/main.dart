@@ -1,7 +1,9 @@
 
+import 'package:access/pages/go_home_page.dart';
 import 'package:access/pages/landing_page.dart';
 import 'package:access/pages/self_declaration_page.dart';
 import 'package:access/pages/symptoms_page.dart';
+import 'package:access/pages/thanks_page.dart';
 import 'package:access/utils/route_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,7 +25,9 @@ class MyApp extends StatelessWidget {
       routes: {
         LandingPage.route: (BuildContext context) => LandingPage(),
         SelfDeclarationPage.route: (BuildContext context) => SelfDeclarationPage(),
-        SymptomsPage.route: (BuildContext context) => SymptomsPage()
+        SymptomsPage.route: (BuildContext context) => SymptomsPage(),
+        ThanksPage.route: (BuildContext context) => ThanksPage(),
+        GoHomePage.route: (BuildContext context) => GoHomePage()
       },
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute<bool>(

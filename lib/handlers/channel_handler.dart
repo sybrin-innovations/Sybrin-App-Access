@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'dart:io' show Platform;
 
 class ChannelHandler {
   static const String _CHANNEL = 'com.sybrin.access';

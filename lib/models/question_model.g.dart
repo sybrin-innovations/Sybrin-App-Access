@@ -16,7 +16,6 @@ QuestionModel _$QuestionModelFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$QuestionModelToJson(QuestionModel instance) =>
     <String, dynamic>{
-      'questionLabel': instance.questionLabel,
       'questionId': instance.questionId,
       'answer1': instance.answer1,
     };

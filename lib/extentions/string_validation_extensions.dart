@@ -37,4 +37,8 @@ extension StringValidation on String {
   bool get isFloat {
     return _float.hasMatch(this);
   }
+
+  String capitalize() {
+      return "${this[0].toUpperCase()}${this.substring(1)}";
+    }
 }

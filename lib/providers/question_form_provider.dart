@@ -86,4 +86,13 @@ class QuestionFormProvider{
 
     return symptoms;
   }
+
+  void dispose(){
+    _name.answer("");
+    _surname.answer("");
+    _cellNumber.answer("");
+    _covid.answer("");
+    _quarintine.answer("");
+    _symptoms.answer("");
+  }
 }
