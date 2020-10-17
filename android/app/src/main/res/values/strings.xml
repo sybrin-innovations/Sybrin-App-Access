@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="qrCodeValidationString">https://forms.office.com/Pages/ResponsePage.aspx?id=8vFhHUs3SEqKA0b8mpB5EZMGc7Egs9pFvAPL1QKNuDJUQUQ1Tk1KVURBTlIyWkRRU1BNMUFaUEE1NC4u&amp;qrcode=true</string>
+    <string name="microsoftFormPostUrl">https://forms.office.com/formapi/api/1d61f1f2-374b-4a48-8a03-46fc9a907911/users/227560ca-7933-4c1c-bc65-c47fed36f1b1/forms(\'8vFhHUs3SEqKA0b8mpB5EcpgdSIzeRxMvGXEf-028bFURDAyN0JVMFFHVUFSWVk0WERIWlRXRVRRQy4u\')/responses</string>
+</resources>

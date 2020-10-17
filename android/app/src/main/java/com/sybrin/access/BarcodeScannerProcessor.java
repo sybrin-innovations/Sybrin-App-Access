@@ -40,7 +40,10 @@ public class BarcodeScannerProcessor extends VisionProcessorBase<List<Barcode>> 
     private onSuccessListener<String> onSuccessListener;
     private onFailureListener onFailureListener;
 
-    public BarcodeScannerProcessor() {
+    private String qrCodeUrl;
+
+    public BarcodeScannerProcessor(String qrCodeUrl) {
+        this.qrCodeUrl = qrCodeUrl;
         BarcodeScannerOptions barcodeOptions = new BarcodeScannerOptions.Builder()
                 .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
                 .build();
@@ -72,9 +75,11 @@ public class BarcodeScannerProcessor extends VisionProcessorBase<List<Barcode>> 
     @Override
     public void onSuccess(
             @NonNull List<Barcode> barcodes, @NonNull Bitmap originalImage) {
-        if (barcodes.size() != 0 && onSuccessListener != null){
-            onSuccessListener.onSuccess(barcodes.get(0).getRawValue(), originalImage);
-            onSuccessListener = null;
+        if (barcodes.size() != 0 && onSuccessListener != null) {
+            if (barcodes.get(0).getRawValue().equals(qrCodeUrl)) {
+                onSuccessListener.onSuccess(qrCodeUrl, originalImage);
+                onSuccessListener = null;
+            }
         }
     }
 

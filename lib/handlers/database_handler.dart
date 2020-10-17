@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:access/models/data_result.dart';
 import 'package:access/models/personal_details_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -32,12 +33,12 @@ class DatabaseHandler {
     );
   }
 
-  Future<PersonalDetailsModel> getPersonalDetails() async {
+  Future<DataResult<PersonalDetailsModel>> getPersonalDetails() async {
     try {
       final Database db = await _getDatabase();
       final List<Map<String, dynamic>> maps = await db.query(this._tableName);
 
-      return List.generate(maps.length, (i) {
+      PersonalDetailsModel personalDetails = List.generate(maps.length, (i) {
         return PersonalDetailsModel(
           id: maps[i]['id'],
           name: maps[i]['name'],
@@ -45,8 +46,12 @@ class DatabaseHandler {
           cellNumber: maps[i]['cellNumber'],
         );
       }).first;
-    } catch (e) {
-      return PersonalDetailsModel(cellNumber: null, id: null, name: null, surname: null);
+
+      return DataResult<PersonalDetailsModel>(success: true, value: personalDetails);
+    } on StateError catch(se){
+      return DataResult<PersonalDetailsModel>(success: true, value: null, error: se.message);
+    }catch (e) {
+      return DataResult<PersonalDetailsModel>(success: false, error: "Failed to get personal details from local file store.");
     }
   }
 

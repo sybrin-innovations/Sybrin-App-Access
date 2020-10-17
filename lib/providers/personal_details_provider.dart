@@ -1,4 +1,5 @@
 import 'package:access/handlers/database_handler.dart';
+import 'package:access/models/data_result.dart';
 import 'package:access/models/personal_details_model.dart';
 
 class PersonalDetailsProvider {
@@ -6,7 +7,7 @@ class PersonalDetailsProvider {
     return DatabaseHandler().insertPersonalDetails(personalDetails);
   }
 
-  Future<PersonalDetailsModel> getPersonalDetails() async {
+  Future<DataResult<PersonalDetailsModel>> getPersonalDetails() async {
     return DatabaseHandler().getPersonalDetails();
   }
 

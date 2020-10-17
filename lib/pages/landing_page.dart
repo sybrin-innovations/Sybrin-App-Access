@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:access/blocs/qrcode_scan_bloc.dart';
 import 'package:access/pages/self_declaration_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,8 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
+  QRCodeScanBloc _qrCodeScanBloc = QRCodeScanBloc();
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +43,7 @@ class _LandingPageState extends State<LandingPage> {
     ScanResultModel model = await _scanQRCode();
 
     if (model.success) {
+      _qrCodeScanBloc.setFormUrl(model.value);
       Navigator.pushNamed(context, SelfDeclarationPage.route);
     }
   }

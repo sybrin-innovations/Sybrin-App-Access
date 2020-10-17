@@ -21,13 +21,13 @@ FormModel _$FormModelFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$FormModelToJson(FormModel instance) => <String, dynamic>{
       'answers': instance.answers,
-      'startDate': instance.startDate?.toIso8601String().substring(
-                  instance.startDate?.toIso8601String().length - 1) ==
+      'startDate': instance.startDate?.toIso8601String()?.substring(
+                  instance.startDate?.toIso8601String()?.length - 1) ==
               "Z"
           ? instance.startDate?.toIso8601String()
           : instance.startDate?.toIso8601String() + "Z",
-      'submitDate': instance.submitDate?.toIso8601String().substring(
-                  instance.submitDate?.toIso8601String().length - 1) ==
+      'submitDate': instance.submitDate?.toIso8601String()?.substring(
+                  instance.submitDate?.toIso8601String()?.length - 1) ==
               "Z"
           ? instance.submitDate?.toIso8601String()
           : instance.submitDate?.toIso8601String() + "Z",

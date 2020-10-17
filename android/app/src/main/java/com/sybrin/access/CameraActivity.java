@@ -30,9 +30,10 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private VisionImageProcessor buildProcessor() {
-        return new BarcodeScannerProcessor().addOnSuccessListener((result, bitmap) -> {
+        String verificationUrl = this.getResources().getString(R.string.qrCodeValidationString);
+        return new BarcodeScannerProcessor(verificationUrl).addOnSuccessListener((result, bitmap) -> {
             if (result instanceof String) {
-                SybrinAccess.getInstance(getApplicationContext()).postSuccess((String) result);
+                SybrinAccess.getInstance(getApplicationContext()).postSuccess(this.getResources().getString(R.string.microsoftFormPostUrl));
                 finish();
             }
         }).addOnFailureListener(e -> {

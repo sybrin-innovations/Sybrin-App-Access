@@ -5,7 +5,7 @@ import 'package:access/models/data_result.dart';
 import 'package:access/models/form_model.dart';
 import 'package:access/models/personal_details_model.dart';
 import 'package:access/models/question_model.dart';
-import 'package:access/providers/question_form_provider.dart';
+import 'package:access/providers/form_question_provider.dart';
 import 'package:access/repositories/personal_details_repository.dart';
 import 'package:intl/intl.dart';
 
@@ -18,53 +18,65 @@ class QuestionFormRepository {
     return _addressDetailsRepository;
   }
 
-  QuestionFormProvider _formProvider = QuestionFormProvider();
+  FormQuestionProvider _questionProvider = FormQuestionProvider();
   DateTime _startTime;
-  String _url =
-      "https://forms.office.com/formapi/api/1d61f1f2-374b-4a48-8a03-46fc9a907911/users/227560ca-7933-4c1c-bc65-c47fed36f1b1/forms('8vFhHUs3SEqKA0b8mpB5EcpgdSIzeRxMvGXEf-028bFURDAyN0JVMFFHVUFSWVk0WERIWlRXRVRRQy4u')/responses";
-  List<QuestionModel> _personalDetails;
-  List<QuestionModel> _selfDeclarations;
-  List<QuestionModel> _symptoms;
+  String _url;
+  List<QuestionModel> _personalDetailQuestions;
+  List<QuestionModel> _selfDeclarationQuestions;
+  List<QuestionModel> _symptomQuestions;
+  QuestionModel _submitDateQuestion;
 
-  List<QuestionModel> get personalDetailsQuestions =>
-      _formProvider.getPersonalDetailsQuestions();
-  List<QuestionModel> get selfDeclarationQuestions =>
-      _formProvider.getSelfDeclarationQuestions();
-  List<QuestionModel> get symptomsQuestions =>
-      _formProvider.getSymptomsQuestions();
-  List<String> get symptoms => _formProvider.getSymptoms();
+  List<QuestionModel> getPersonalDetailQuestions() {
+    this._personalDetailQuestions =
+        _questionProvider.getPersonalDetailQuestions();
+    return this._personalDetailQuestions;
+  }
+
+  List<QuestionModel> getSelfDeclarationQuestions() {
+    this._selfDeclarationQuestions =
+        _questionProvider.getSelfDeclarationQuestions();
+    return this._selfDeclarationQuestions;
+  }
+
+  List<QuestionModel> getSymptomQuestions() {
+    this._symptomQuestions = _questionProvider.getSymptomQuestions();
+    return this._symptomQuestions;
+  }
+
+  QuestionModel getSubmitDateQeuestion() {
+    this._submitDateQuestion = _questionProvider.getSubitDateQuestion();
+    return this._submitDateQuestion;
+  }
 
   void setStartTime() {
     _startTime = DateTime.now();
   }
 
-  void setPersonalDetailsQuestions(List<QuestionModel> personalDetails) {
-    this._personalDetails = personalDetails;
+  void setUrl(String url) {
+    this._url = url;
   }
 
-  void setSelfDeclarationQuestions(List<QuestionModel> selfDeclarations) {
-    this._selfDeclarations = selfDeclarations;
-  }
+  Future<DataResult<bool>> submitForm() async {
+    if (_personalDetailQuestions == null) {
+      _personalDetailQuestions = getPersonalDetailQuestions();
+      PersonalDetailsModel personalDetails = PersonalDetailsRepository().personalDetails;
 
-  void setSymptomsQuestions(List<QuestionModel> symptoms) {
-    this._symptoms = symptoms;
-  }
+      _personalDetailQuestions[0].answer(personalDetails.name);
+      _personalDetailQuestions[1].answer(personalDetails.surname);
+      _personalDetailQuestions[2].answer(personalDetails.cellNumber);
+    }
 
-  Future<bool> submitForm() async {
-    PersonalDetailsModel personalDetails =
-        await PersonalDetailsRepository().getPersonalDetails();
-    List<QuestionModel> ques = _formProvider.getPersonalDetailsQuestions();
-    ques[0].answer(personalDetails.name);
-    ques[1].answer(personalDetails.surname);
-    ques[2].answer(personalDetails.cellNumber);
-    ques[3].answer(DateFormat('yyyy-MM-dd').format(DateTime.now()));
-
-    _personalDetails = ques;
+    if (_submitDateQuestion == null) {
+      _submitDateQuestion = getSubmitDateQeuestion();
+      _submitDateQuestion
+          .answer(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+    }
 
     List<QuestionModel> questions = List<QuestionModel>();
-    questions.addAll(_personalDetails);
-    questions.addAll(_selfDeclarations);
-    questions.addAll(_symptoms);
+    questions.addAll(_personalDetailQuestions);
+    questions.add(_submitDateQuestion);
+    questions.addAll(_selfDeclarationQuestions);
+    questions.addAll(_symptomQuestions);
 
     FormModel model = new FormModel(
       _url,
@@ -77,18 +89,24 @@ class QuestionFormRepository {
     DataResult<String> dataResult = await sh.submitData(model);
 
     if (dataResult.success) {
-      return true;
+      return DataResult<bool>(success: true, value: true);
+    } else {
+      return DataResult<bool>(
+          success: false, value: false, error: dataResult.error);
     }
-
-    return false;
   }
 
-  void dispose(){
+  void dispose() {
     _startTime = null;
-  _personalDetails = null;
-  _selfDeclarations = null;
-  _symptoms = null;
+    _url = null;
+    _personalDetailQuestions = null;
+    _selfDeclarationQuestions = null;
+    _symptomQuestions = null;
 
-  this._formProvider.dispose();
+    this._questionProvider.dispose();
+  }
+
+  void disposeSelfDeclartions() {
+    _selfDeclarationQuestions = null;
   }
 }

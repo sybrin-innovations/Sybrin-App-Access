@@ -1,3 +1,4 @@
+import 'package:access/models/data_result.dart';
 import 'package:access/models/personal_details_model.dart';
 import 'package:access/providers/personal_details_provider.dart';
 
@@ -12,6 +13,7 @@ class PersonalDetailsRepository {
 
   PersonalDetailsModel _personalDetailsModel;
   PersonalDetailsProvider _personalDetailsProvider = PersonalDetailsProvider();
+  PersonalDetailsModel get personalDetails => _personalDetailsModel;
 
   Future<void> setPersonalDetails(
       PersonalDetailsModel personalDetailsModel) async {
@@ -27,11 +29,21 @@ class PersonalDetailsRepository {
     return;
   }
 
-  Future<PersonalDetailsModel> getPersonalDetails() async {
+  Future<DataResult<PersonalDetailsModel>> getPersonalDetails() async {
     if (this._personalDetailsModel == null) {
-      this._personalDetailsModel = await _personalDetailsProvider.getPersonalDetails();
+      DataResult<PersonalDetailsModel> dataResult =
+          await _personalDetailsProvider.getPersonalDetails();
+      if (dataResult.success) {
+        this._personalDetailsModel = dataResult.value;
+        return dataResult;
+      } else {
+        return DataResult<PersonalDetailsModel>(
+            success: false, error: dataResult.error);
+      }
+    } else {
+      return DataResult<PersonalDetailsModel>(
+          success: true, value: this._personalDetailsModel);
     }
-    return this._personalDetailsModel;
   }
 
   Future<void> clearPersonalDetails() async {
