@@ -1,4 +1,5 @@
 import 'package:access/blocs/self_declaration_bloc.dart';
+import 'package:access/gradients/sybrin_gradients.dart';
 import 'package:access/models/data_result.dart';
 import 'package:access/models/error_arguments_model.dart';
 import 'package:access/models/question_model.dart';
@@ -8,8 +9,13 @@ import 'package:access/pages/error_page.dart';
 import 'package:access/pages/go_home_page.dart';
 import 'package:access/pages/symptoms_page.dart';
 import 'package:access/repositories/question_form_repository.dart';
+import 'package:access/widgets/drawer_scaffold.dart';
+import 'package:access/widgets/form_card.dart';
+import 'package:access/widgets/gradient_button.dart';
+import 'package:access/widgets/loader_widget.dart';
 import 'package:access/widgets/personal_details_drawer.dart';
 import 'package:access/widgets/radio_widget.dart';
+import 'package:access/widgets/sybrin_background_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -34,8 +40,10 @@ class _SelfDeclarationPageState extends State<SelfDeclarationPage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: dispose,
-          child: StreamBuilder(
+      onWillPop: () {
+        return clear();
+      },
+      child: StreamBuilder(
           stream: this._selfDeclarationBloc.pageDetailsStream,
           builder: (BuildContext context,
               AsyncSnapshot<DataResult<SelfDeclarationPageDetailsModel>>
@@ -52,14 +60,27 @@ class _SelfDeclarationPageState extends State<SelfDeclarationPage> {
                   return _buildLoader();
                 }
 
-                return Scaffold(
-                  appBar: AppBar(
-                    title: Text("Self Declaration"),
-                  ),
+                return DrawerScaffold(
+                  title: "Self Declaration",
                   drawer: PersonalDetailsDrawer(
                     model: snapshot.data.value.personalDetails,
                   ),
-                  body: _buildBody(snapshot.data.value.questions),
+                  body: GestureDetector(
+                      onPanUpdate: (details) {
+                        //Swipe from left to right
+                        if (details.delta.dx > 0) {
+                          Navigator.pop(context);
+                          clear();
+                        }
+
+                        //Swipe from right to left
+                        if (details.delta.dx < 0) {
+                          if (_formFilled) {
+                            onNext(snapshot.data.value.questions);
+                          }
+                        }
+                      },
+                      child: _buildBody(snapshot.data.value.questions)),
                 );
               }
               WidgetsBinding.instance.addPostFrameCallback((_) =>
@@ -76,9 +97,7 @@ class _SelfDeclarationPageState extends State<SelfDeclarationPage> {
 
   Widget _buildLoader() {
     return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
+      body: LoaderWidget(text: "Procedurally generating contents"),
     );
   }
 
@@ -97,37 +116,65 @@ class _SelfDeclarationPageState extends State<SelfDeclarationPage> {
 
   Widget _buildBody(List<QuestionModel> questions) {
     List<Widget> bodyColumn = _buildRadioSelectors(questions);
-    bodyColumn.add(
-      RaisedButton(
-        onPressed: _formFilled ? () => onNext(questions) : null,
-        child: Text("Next"),
-      ),
-    );
 
-    return Container(
-      padding: EdgeInsets.all(50),
-      child: SingleChildScrollView(
-        child: Column(
-          children: bodyColumn,
+    return Stack(
+      children: [
+        SybrinBackgroundWidget(
+          withColor: false,
         ),
+        Padding(
+          padding: EdgeInsets.only(top: 80),
+          child: Container(
+            padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+            child: Column(
+              children: [
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 20),
+                      child: FormCard(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: bodyColumn,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                _buildNextButton(questions),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNextButton(List<QuestionModel> questions) {
+    return Container(
+      margin: EdgeInsets.only(top: 15),
+      child: GradientButton(
+        onPressed: _formFilled ? () => onNext(questions) : null,
+        title: "Next >".toUpperCase(),
+        gradient: SybrinGradients.getLinearGradient(context),
       ),
     );
   }
 
   void isFormFilled(List<QuestionModel> questions) {
     setState(() {
-          bool allAnswered = true;
-        questions.forEach((question) { 
-          if ( question.answer1 == null || question.answer1.isEmpty) {
-            allAnswered = false;
-          }
-        });
-
-        if (allAnswered) {
-          _formFilled = true;
-        }else{
-          _formFilled = false;
+      bool allAnswered = true;
+      questions.forEach((question) {
+        if (question.answer1 == null || question.answer1.isEmpty) {
+          allAnswered = false;
         }
+      });
+
+      if (allAnswered) {
+        _formFilled = true;
+      } else {
+        _formFilled = false;
+      }
     });
   }
 
@@ -148,9 +195,15 @@ class _SelfDeclarationPageState extends State<SelfDeclarationPage> {
     }
   }
 
-  Future<bool> dispose() async {
-    super.dispose();
+  Future<bool> clear() async {
     _selfDeclarationBloc.dispose();
     return true;
+  }
+
+  @override
+  void setState(fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
   }
 }

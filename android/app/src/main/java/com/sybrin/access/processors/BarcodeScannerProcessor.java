@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sybrin.access;
+package com.sybrin.access.processors;
 
 import android.content.Context;
 import android.graphics.Bitmap;

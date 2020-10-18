@@ -1,4 +1,6 @@
 import 'package:access/enums/alert_type.dart';
+import 'package:access/gradients/sybrin_gradients.dart';
+import 'package:access/widgets/gradient_button.dart';
 import 'package:access/widgets/pill_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +99,7 @@ class _AlertPopupState extends State<AlertPopup>
       case AlertType.Info:
         return Icon(
           Icons.info_outline,
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.background,
           size: this._standardIconSize,
         );
         break;
@@ -118,10 +120,7 @@ class _AlertPopupState extends State<AlertPopup>
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: Text(
         this.widget.text,
-        style: Theme.of(context)
-            .textTheme
-            .bodyText2
-            .apply(color: Theme.of(context).hintColor),
+        style: Theme.of(context).textTheme.bodyText1,
         textAlign: TextAlign.center,
       ),
     );
@@ -131,13 +130,10 @@ class _AlertPopupState extends State<AlertPopup>
     return Container(
       child: Column(
         children: <Widget>[
-          PillButton(
+          GradientButton(
+            title: this.widget.buttonText.toUpperCase(),
             onPressed: _onButtonPressed,
-            backgroundColor: Theme.of(context).primaryColor,
-            buttonText: this.widget.buttonText.toUpperCase(),
-            buttonTextStyle: Theme.of(context).textTheme.button.apply(
-                  color: Colors.white,
-                ),
+            gradient: SybrinGradients.getLinearGradient(context),
           ),
           this.widget.alertType != AlertType.Error
               ? SizedBox(
@@ -145,14 +141,17 @@ class _AlertPopupState extends State<AlertPopup>
                 )
               : Container(),
           this.widget.alertType != AlertType.Error
-              ? PillButton(
-                  onPressed: _onBackPressed,
-                  backgroundColor: Theme.of(context).cardColor,
-                  borderColor: Theme.of(context).accentColor,
-                  buttonText: "Cancel".toUpperCase(),
-                  buttonTextStyle: Theme.of(context).textTheme.button.apply(
-                        color: Theme.of(context).colorScheme.secondaryVariant,
-                      ),
+              ? Container(
+                  height: 50,
+                  child: PillButton(
+                    buttonTextStyle: Theme.of(context)
+                        .textTheme
+                        .button
+                        .apply(color: Colors.black),
+                    backgroundColor: Theme.of(context).cardColor,
+                    buttonText: "Cancel".toUpperCase(),
+                    onPressed: _onBackPressed,
+                  ),
                 )
               : Container(),
         ],

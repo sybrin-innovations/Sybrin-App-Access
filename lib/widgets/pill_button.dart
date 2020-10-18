@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -25,10 +24,9 @@ class PillButton extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      child: RaisedButton(
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 17.8),
-          child: AutoSizeText(this.buttonText, style: _buttonTextStyle),
+      child: FlatButton(
+        child: Center(
+          child: Text(this.buttonText, style: _buttonTextStyle),
         ),
         onPressed: this.onPressed,
         color: backgroundColor,

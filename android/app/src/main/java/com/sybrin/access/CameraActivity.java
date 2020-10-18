@@ -6,6 +6,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.sybrin.access.overlays.InnovationsBrandText;
+import com.sybrin.access.overlays.OverlayWrapper;
+import com.sybrin.access.overlays.QRCodeInstructionText;
+import com.sybrin.access.overlays.TorchView;
+import com.sybrin.access.overlays.cutoutOverlay.QRCodeCutoutOverlay;
+import com.sybrin.access.processors.BarcodeScannerProcessor;
 import com.sybrin.camera.camera.CameraSource;
 import com.sybrin.camera.camera.CameraSourcePreview;
 import com.sybrin.camera.processors.VisionImageProcessor;
@@ -45,6 +51,19 @@ public class CameraActivity extends AppCompatActivity {
     private void launchCamera() {
         cameraSource = CameraSource.createCamera(CameraActivity.this, preview, 640, 480);
         cameraSource.setFrameProcessor(buildProcessor());
+        buildOverlay();
+    }
+
+    private void buildOverlay(){
+        OverlayWrapper wrapper = findViewById(R.id.overlayWrapper);
+        OverlayWrapper overlay = new OverlayWrapper.Builder()
+                .setCutoutOverlay(new QRCodeCutoutOverlay(getApplicationContext()))
+                .setBrandText(new InnovationsBrandText(getApplicationContext()))
+                .setInstructionText(new QRCodeInstructionText(getApplicationContext()))
+                .setTorchView(new TorchView(getApplicationContext()))
+                .build(getApplicationContext());
+
+        wrapper.cloneFrom(overlay);
     }
 
     @Override

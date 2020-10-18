@@ -1,4 +1,4 @@
-package com.sybrin.access;
+package com.sybrin.access.models;
 
 public class ScanResultModel {
     public boolean success;

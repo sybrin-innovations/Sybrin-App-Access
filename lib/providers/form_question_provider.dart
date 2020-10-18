@@ -24,30 +24,30 @@ class FormQuestionProvider {
 
   static QuestionModel _covid = QuestionModel(
       questionId: "r70bd2cd5ce10422eaa3af29f1d3bb090",
-      questionLabel: "Got Covid?",
+      questionLabel: "Are you currently required to be in isolation because you have been diagnosed with coronavirus (COVID-19)?",
       questionType: QuestionType.RadioSelect,
       expectedAnswers: ["Yes", "No"]);
 
   static QuestionModel _quarintine = QuestionModel(
       questionId: "rb5b426b63ed747a7bd558c749a8ce21c",
-      questionLabel: "Gotta Quarintine?",
+      questionLabel: "Have you been directed to a period of 14-day querantine by the Department of Health as a result of being in close contact with someone diagnosed with coronavirus (COVID-19)?",
       questionType: QuestionType.RadioSelect,
       expectedAnswers: ["Yes", "No"]);
 
   static List<String> _symptomsList = [
-    "Fever",
+    "Fever (Body temperature above 37.5°C)",
     "Chills",
     "Cough",
     "Sore throat",
     "Shortness of breath",
     "Runny nose",
-    "Loss of sens of smell",
+    "Loss of sense of smell",
     "None of the above"
   ];
 
   static QuestionModel _symptoms = QuestionModel(
       questionId: "r510a20ed4b594fd984258e5f1c168ab2",
-      questionLabel: "Got Symptoms?",
+      questionLabel: "Are you currently experiencing any of the following symptoms?",
       questionType: QuestionType.MultiChoice,
       expectedAnswers: _symptomsList);
 

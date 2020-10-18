@@ -1,5 +1,6 @@
 import 'package:access/blocs/add_personal_details_bloc.dart';
 import 'package:access/enums/page_input_state.dart';
+import 'package:access/gradients/sybrin_gradients.dart';
 import 'package:access/models/data_result.dart';
 import 'package:access/models/error_arguments_model.dart';
 import 'package:access/models/personal_details_model.dart';
@@ -7,10 +8,15 @@ import 'package:access/models/question_model.dart';
 import 'package:access/pages/error_page.dart';
 import 'package:access/pages/self_declaration_page.dart';
 import 'package:access/utils/pair.dart';
+import 'package:access/widgets/form_card.dart';
+import 'package:access/widgets/gradient_button.dart';
 import 'package:access/widgets/iconized_text_input_widget.dart';
+import 'package:access/widgets/personal_details_app_bar.dart';
+import 'package:access/widgets/sybrin_background_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:access/extentions/string_validation_extensions.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:uuid/uuid.dart';
 
 class AddPersonalDetailsPage extends StatefulWidget {
@@ -28,16 +34,14 @@ class AddPersonalDetailsPage extends StatefulWidget {
 
 class _AddPersonalDetailsPageState extends State<AddPersonalDetailsPage> {
   bool _isFormFilled = false;
-
+  PersonalDetailsModel personalDetails;
   AddPersonalDetailsBloc _addPersonalDetailsBloc = AddPersonalDetailsBloc();
-
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   List<TextEditingController> _inputControllers = List<TextEditingController>();
   List<Pair<FocusNode, FocusNode>> _inputFocusNodes =
       List<Pair<FocusNode, FocusNode>>();
-
   int _cellNumberLength = 10;
+  bool _isKeyboardVisible = false;
 
   @override
   void initState() {
@@ -50,6 +54,12 @@ class _AddPersonalDetailsPageState extends State<AddPersonalDetailsPage> {
       default:
     }
     super.initState();
+
+    KeyboardVisibility.onChange.listen((bool visible) {
+      setState(() {
+        _isKeyboardVisible = visible;
+      });
+    });
   }
 
   void initTextFields() async {
@@ -57,11 +67,12 @@ class _AddPersonalDetailsPageState extends State<AddPersonalDetailsPage> {
         await this._addPersonalDetailsBloc.getPersonalDetails();
 
     if (dataResult.success) {
-      _inputControllers.add(TextEditingController(text: dataResult.value.name));
+      personalDetails = dataResult.value;
+      _inputControllers.add(TextEditingController(text: personalDetails.name));
       _inputControllers
-          .add(TextEditingController(text: dataResult.value.surname));
+          .add(TextEditingController(text: personalDetails.surname));
       _inputControllers
-          .add(TextEditingController(text: dataResult.value.cellNumber));
+          .add(TextEditingController(text: personalDetails.cellNumber));
       this._isFormFilled = true;
     }
   }
@@ -69,23 +80,34 @@ class _AddPersonalDetailsPageState extends State<AddPersonalDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder(
-          stream: _addPersonalDetailsBloc.personalDetailQuestionsStream,
-          builder: (context, AsyncSnapshot<List<QuestionModel>> snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data == null) {
-                WidgetsBinding.instance.addPostFrameCallback((_) =>
-                    Navigator.pushReplacementNamed(context, ErrorPage.route,
+      body: Stack(
+        children: [
+          SybrinBackgroundWidget(
+            withColor: false,
+          ),
+          StreamBuilder(
+              stream: _addPersonalDetailsBloc.personalDetailQuestionsStream,
+              builder: (context, AsyncSnapshot<List<QuestionModel>> snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data == null) {
+                    WidgetsBinding.instance.addPostFrameCallback(
+                      (_) => Navigator.pushReplacementNamed(
+                        context,
+                        ErrorPage.route,
                         arguments: ErrorArgumentsModel(
                             errorMessage:
-                                "There was an error loading the personal details questions.")));
-              }
+                                "There was an error loading the personal details questions."),
+                      ),
+                    );
+                  }
 
-              return _buildBody(snapshot.data);
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          }),
+                  return _buildBody(snapshot.data);
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              }),
+        ],
+      ),
     );
   }
 
@@ -145,34 +167,67 @@ class _AddPersonalDetailsPageState extends State<AddPersonalDetailsPage> {
         onChanged: (text) {
           questions[index].answer(text);
           isFormEmpty();
+          _updateLocalPersonalDetails();
         },
       );
       return textInput;
     });
   }
 
+  void _updateLocalPersonalDetails() {
+    setState(() {
+      if (_inputControllers != null) {
+        if(this.personalDetails == null){
+          // ignore: missing_required_param
+          this.personalDetails = PersonalDetailsModel();
+        }
+        this.personalDetails.name = _inputControllers[0].text;
+        this.personalDetails.surname = _inputControllers[1].text;
+        this.personalDetails.cellNumber = _inputControllers[2].text;
+      }
+    });
+  }
+
   Widget _buildBody(List<QuestionModel> questions) {
-    return Container(
-      padding: EdgeInsets.all(50),
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Form(
-              key: _formKey,
-              child: Column(
-                children: _buildInputBoxes(questions),
+    return Column(
+      children: [
+        PersonalDetailsAppBar(
+          personalDetails: personalDetails,
+          height: _isKeyboardVisible
+              ?  MediaQuery.of(context).size.height * 0.16
+              : MediaQuery.of(context).size.height * 0.35,
+        ),
+        Expanded(
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 20,
+            ),
+            child: SingleChildScrollView(
+              child: FormCard(
+                child: Container(
+                  padding: EdgeInsets.only(
+                    bottom: 20,
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: _buildInputBoxes(questions),
+                    ),
+                  ),
+                ),
               ),
             ),
-            Divider(
-              height: 15,
-            ),
-            RaisedButton(
-              onPressed: _isFormFilled ? () => _onSave(questions) : null,
-              child: Text("SAVE"),
-            )
-          ],
+          ),
         ),
-      ),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: GradientButton(
+            gradient: SybrinGradients.getLinearGradient(context),
+            onPressed: _isFormFilled ? () => _onSave(questions) : null,
+            title: "Save".toUpperCase(),
+          ),
+        )
+      ],
     );
   }
 
@@ -214,9 +269,9 @@ class _AddPersonalDetailsPageState extends State<AddPersonalDetailsPage> {
     if (_formKey.currentState.validate()) {
       PersonalDetailsModel model = new PersonalDetailsModel(
         id: Uuid().v1(),
-        name: questions[0].answer1.capitalize(),
-        surname: questions[1].answer1.capitalize(),
-        cellNumber: questions[2].answer1,
+        name: _inputControllers[0].text.capitalize(),
+        surname: _inputControllers[1].text.capitalize(),
+        cellNumber: _inputControllers[2].text,
       );
 
       switch (this.widget.inputState) {

@@ -1,12 +1,16 @@
 import 'package:access/blocs/personal_details_drawer_bloc.dart';
 import 'package:access/enums/alert_type.dart';
 import 'package:access/enums/page_input_state.dart';
+import 'package:access/gradients/sybrin_gradients.dart';
 import 'package:access/models/personal_details_model.dart';
 import 'package:access/pages/add_personal_details_page.dart';
 import 'package:access/pages/self_declaration_page.dart';
 import 'package:access/widgets/alert_popup.dart';
+import 'package:access/widgets/personal_details_app_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:package_info/package_info.dart';
 
 class PersonalDetailsDrawer extends StatefulWidget {
   final PersonalDetailsModel model;
@@ -21,85 +25,108 @@ class _PersonalDetailsDrawerState extends State<PersonalDetailsDrawer> {
   final PersonalDetailsDrawerBloc _personalDetailsDrawerBloc =
       PersonalDetailsDrawerBloc();
 
+  String versionNumber = "";
+
+  @override
+  void initState() {
+    getPackageInfo();
+    super.initState();
+  }
+
+  void getPackageInfo() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      versionNumber = packageInfo.version;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return this.widget.model != null
         ? Drawer(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                DrawerHeader(
-                  padding: EdgeInsets.only(bottom: 20, top: 10),
-                  child: Center(
-                    child: _buildDetails(),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      _buildHeader(),
+                      _buildDetailsText(),
+                    ],
                   ),
+                ),
+                _buildDeleteDetailsButton(),
+                Container(
+                  width: double.infinity,
+                  height: 40,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).accentColor,
+                    gradient: SybrinGradients.getLinearGradient(context),
                   ),
-                ),
-                ListTile(
-                  title: Text('Change personal details'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _onChangeDetailsTap();
-                  },
-                ),
-                ListTile(
-                  title: Text('Delete personal details'),
-                  onTap: () {
-                    _onDeleteDetailsTap();
-                  },
-                ),
+                  child: Center(
+                    child: Text(
+                      "Version : " + versionNumber,
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
+                  ),
+                )
               ],
             ),
           )
-        : null;
+        : Center(
+            child: CircularProgressIndicator(),
+          );
   }
 
-  Widget _buildDetails() {
+  Widget _buildDeleteDetailsButton() {
     return Container(
+      width: double.infinity,
+      height: 50,
+      margin: EdgeInsets.symmetric(vertical: 10),
+      child: FlatButton(
+        highlightColor: Theme.of(context).errorColor,
+        onPressed: _onDeleteDetailsTap,
+        child: Row(
+          children: [
+            Padding(
+                padding: EdgeInsets.only(right: 20),
+                child: Icon(FontAwesomeIcons.trashAlt)),
+            Text(
+              "Delete Personal Details",
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return PersonalDetailsAppBar(
+      personalDetails: this.widget.model,
+      onEditPressed: _onChangeDetailsTap,
+    );
+  }
+
+  Widget _buildDetailsText() {
+    return Center(
       child: Column(
-        children: <Widget>[
-          Flexible(
-            child: _buildPersonalIcon(),
-          ),
-          Container(
-            height: 20,
-          ),
+        children: [
           Text(
             this.widget.model.name + " " + this.widget.model.surname,
-            style: TextStyle(color: Colors.white, fontSize: 16),
+            style: Theme.of(context).textTheme.headline3,
           ),
           Text(
             this.widget.model.cellNumber,
-            style: TextStyle(color: Colors.white, fontSize: 14),
-          )
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildPersonalIcon() {
-    return CircleAvatar(
-      radius: 55,
-      backgroundColor: Colors.orange,
-      child: Container(
-        alignment: Alignment.center,
-        height: double.infinity,
-        width: double.infinity,
-        child: Text(
-          this.widget.model.name.substring(0, 1).toUpperCase() +
-              this.widget.model.surname.substring(0, 1).toUpperCase(),
-          style: TextStyle(color: Colors.white, fontSize: 30),
-        ),
-        decoration: BoxDecoration(
-            color: Theme.of(context).backgroundColor, shape: BoxShape.circle),
-      ),
-    );
-  }
-
   void _onChangeDetailsTap() {
-    Navigator.pushReplacementNamed(context, AddPersonalDetailsPage.route,
+    Navigator.pushNamed(context, AddPersonalDetailsPage.route,
         arguments: PageInputState.Edit);
   }
 

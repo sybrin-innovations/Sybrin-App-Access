@@ -58,9 +58,7 @@ class _IconizedTextInputWidgetState extends State<IconizedTextInputWidget> {
       maxLength: this.widget.maxLength,
       autocorrect: false,
       controller: this.widget.controller,
-      style: Theme.of(context).textTheme.caption.apply(
-            color: Theme.of(context).colorScheme.primary,
-          ),
+      style: Theme.of(context).textTheme.bodyText1,
       decoration: InputDecoration(
         suffixIcon:
             this.widget.suffixIcon == null ? null : this.widget.suffixIcon,
@@ -75,13 +73,11 @@ class _IconizedTextInputWidgetState extends State<IconizedTextInputWidget> {
             this.widget.controller != null && this.widget.controller.text != "" ? this.widget.hint : _labelText,
         labelStyle: Theme.of(context)
             .textTheme
-            .caption
-            .apply(color: Theme.of(context).colorScheme.primary),
+            .headline3,
         hintText: widget.hint,
         hintStyle: Theme.of(context)
             .textTheme
-            .caption
-            .apply(color: Theme.of(context).accentColor),
+            .bodyText1.apply(color: Colors.grey[700]),
       ),
       focusNode: widget.focusNode,
       keyboardType: this.widget.textInputType,

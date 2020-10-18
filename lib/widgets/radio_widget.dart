@@ -33,11 +33,18 @@ class _RadioWidgetState extends State<RadioWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.only(bottom: 20),
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(this.widget.title),
+          Container(
+            margin: EdgeInsets.only(bottom: 20),
+            child: Text(
+              this.widget.title,
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
           _buildRadioButtons(),
         ],
       ),
@@ -47,22 +54,42 @@ class _RadioWidgetState extends State<RadioWidget> {
   Widget _buildRadioButtons() {
     return Column(
       children: List.generate(this.widget.selectionItems.length, (index) {
-        return Row(
-          children: <Widget>[
-            Radio(
-              value: index,
-              groupValue: _groupValue,
-              onChanged: (value) {
-                setState(() {
-                  _groupValue = value;
-                });
-                this.widget.onChanged(this.widget.selectionItems[index]);
-              },
-            ),
-            Text(this.widget.selectionItems[index])
-          ],
+        return Container(
+          child: _buildRadioItem(index),
         );
       }),
+    );
+  }
+
+  Widget _buildRadioItem(int index) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 5),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: _groupValue == index
+            ? Theme.of(context).backgroundColor.withOpacity(0.8)
+            : Theme.of(context).cardColor,
+        borderRadius: BorderRadius.all(
+          const Radius.circular(10.0),
+        ),
+      ),
+      child: RadioListTile(
+        title: Text(
+          this.widget.selectionItems[index],
+          style: _groupValue == index
+              ? Theme.of(context).textTheme.bodyText2
+              : Theme.of(context).textTheme.bodyText1,
+        ),
+        activeColor: Theme.of(context).primaryColor,
+        value: index,
+        groupValue: _groupValue,
+        onChanged: (value) {
+          setState(() {
+            _groupValue = value;
+          });
+          this.widget.onChanged(this.widget.selectionItems[index]);
+        },
+      ),
     );
   }
 }

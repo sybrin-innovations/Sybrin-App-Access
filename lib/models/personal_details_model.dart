@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class PersonalDetailsModel {
   final String id;
-  final String name;
-  final String surname;
-  final String cellNumber;
+  String name;
+  String surname;
+  String cellNumber;
   bool hasData = false;
 
   PersonalDetailsModel(

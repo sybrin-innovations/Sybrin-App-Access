@@ -1,12 +1,8 @@
-
-import 'package:access/pages/go_home_page.dart';
 import 'package:access/pages/landing_page.dart';
 import 'package:access/pages/self_declaration_page.dart';
-import 'package:access/pages/symptoms_page.dart';
-import 'package:access/pages/thanks_page.dart';
+import 'package:access/themes/sybrin_theme.dart';
 import 'package:access/utils/route_generator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,18 +12,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
       title: 'Sybrin Access',
       onGenerateRoute: RouteGenerator.generateRoute,
-      theme: ThemeData(primaryColor: Colors.blue, accentColor: Colors.lightBlue, backgroundColor: Colors.deepPurple),
+      theme: SybrinTheme.aiTheme,
       initialRoute: LandingPage.route,
       routes: {
         LandingPage.route: (BuildContext context) => LandingPage(),
-        SelfDeclarationPage.route: (BuildContext context) => SelfDeclarationPage(),
-        SymptomsPage.route: (BuildContext context) => SymptomsPage(),
-        ThanksPage.route: (BuildContext context) => ThanksPage(),
-        GoHomePage.route: (BuildContext context) => GoHomePage()
       },
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute<bool>(
@@ -37,5 +29,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
